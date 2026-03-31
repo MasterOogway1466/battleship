@@ -35,7 +35,14 @@ function App() {
           setIsMyTurn(data.turn === socket.id);
           setScreen('battle');
       });
-      return () => socket.off('game_start');
+      socket.on('opponent_disconnected', () => {
+          alert("Connection lost. The enemy fleet retreated.");
+          window.location.reload();
+      });
+      return () => {
+          socket.off('game_start');
+          socket.off('opponent_disconnected');
+      };
   }, [socket]);
 
   const addNotification = (msg, color) => {

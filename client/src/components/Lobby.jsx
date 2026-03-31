@@ -13,15 +13,9 @@ export default function Lobby({ socket, setScreen, setIsPlayer0 }) {
             setScreen('setup');
         });
 
-        socket.on('opponent_disconnected', () => {
-            alert("Connection lost. The enemy fleet retreated.");
-            window.location.reload();
-        });
-
         return () => {
             socket.off('waiting_for_match');
             socket.off('matched');
-            socket.off('opponent_disconnected');
         };
     }, [socket, setScreen, setIsPlayer0]);
 
