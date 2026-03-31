@@ -40,6 +40,10 @@ io.on('connection', (socket) => {
                     [waitingSocket.id]: [],
                     [socket.id]: []
                 },
+                shipsData: {
+                    [waitingSocket.id]: [],
+                    [socket.id]: []
+                },
                 turn: waitingSocket.id // waiting socket goes first
             };
 
@@ -87,6 +91,7 @@ io.on('connection', (socket) => {
         });
 
         game.ships[socket.id] = shipCoords;
+        game.shipsData[socket.id] = shipsData;
         game.playersReady++;
 
         if (game.playersReady === 2) {
@@ -117,14 +122,33 @@ io.on('connection', (socket) => {
 
         const isHit = game.ships[opponentId].includes(coordString);
 
-        // Check for win condition (17 total hits for 5,4,3,3,2 length ships)
+        // Check for win condition and sunk ships
         let isWin = false;
+        let sunkShip = null;
+
         if (isHit) {
             let hitCount = 0;
             game.shots[socket.id].forEach(shot => {
                 if (game.ships[opponentId].includes(shot)) hitCount++;
             });
             if (hitCount === 17) isWin = true;
+
+            // Check if this specific shot sunk a ship
+            const targetShips = game.shipsData[opponentId];
+            for (let ship of targetShips) {
+                const isSunkNow = ship.positions.every(pos => 
+                    game.shots[socket.id].includes(`${pos.x},${pos.y}`) || (pos.x === coords.x && pos.y === coords.y)
+                );
+                if (isSunkNow) {
+                    const wasSunkBefore = ship.positions.every(pos => {
+                        if (pos.x === coords.x && pos.y === coords.y) return false;
+                        return game.shots[socket.id].includes(`${pos.x},${pos.y}`);
+                    });
+                    if (!wasSunkBefore) {
+                        sunkShip = ship.id;
+                    }
+                }
+            }
         }
 
         const isPlayer0 = game.player0 === socket.id;
@@ -134,6 +158,7 @@ io.on('connection', (socket) => {
             x: coords.x,
             y: coords.y,
             isHit,
+            sunkShip,
             shooterIsPlayer0: isPlayer0
         });
 

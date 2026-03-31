@@ -34,6 +34,7 @@
                 <div class="fleet-controls">
                     <h2>Deploy Your Fleet</h2>
                     <p>Click to place ships or press [R] to rotate.</p>
+                    <button id="btn-rotate" class="btn" style="margin-top: 10px; padding: 8px 16px; font-size: 0.9rem; background: rgba(255,255,255,0.1); color: white;">Rotate Ship</button>
                     <div id="fleet-list" class="fleet-list">
                         <!-- Ships to place will be injected here -->
                     </div>
@@ -69,6 +70,9 @@
                 <button id="btn-play-again" class="btn primary-btn" onclick="location.reload()">Return to Fleet Command</button>
             </div>
         </section>
+
+        <!-- Notifications -->
+        <div id="notification-area" class="notification-area"></div>
     </main>
 
     <!-- Scripts -->

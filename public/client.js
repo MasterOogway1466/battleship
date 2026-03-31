@@ -12,7 +12,9 @@ const queueStatus = document.getElementById('queue-status');
 const setupGridEl = document.getElementById('placement-grid');
 const fleetListEl = document.getElementById('fleet-list');
 const btnReady = document.getElementById('btn-ready');
+const btnRotate = document.getElementById('btn-rotate');
 const setupStatus = document.getElementById('placement-status');
+const notificationArea = document.getElementById('notification-area');
 
 const ownGridEl = document.getElementById('own-grid');
 const targetGridEl = document.getElementById('target-grid');
@@ -50,6 +52,18 @@ function showScreen(screenEl) {
     screenEl.classList.add('active');
 }
 
+function showNotification(msg, color = 'var(--neon-blue)') {
+    const el = document.createElement('div');
+    el.classList.add('notification');
+    el.innerText = msg;
+    el.style.borderLeftColor = color;
+    notificationArea.appendChild(el);
+    setTimeout(() => {
+        el.classList.add('fade-out');
+        setTimeout(() => el.remove(), 500);
+    }, 4000);
+}
+
 // --- Init & Connection ---
 btnJoinQueue.addEventListener('click', () => {
     socket.emit('join_queue');
@@ -81,8 +95,11 @@ function initSetupPhase() {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'r' || e.key === 'R') {
             isHorizontal = !isHorizontal;
-            // Need to update preview if currently hovering over a cell
         }
+    });
+
+    btnRotate.addEventListener('click', () => {
+        isHorizontal = !isHorizontal;
     });
 }
 
@@ -259,7 +276,7 @@ function handleTargetClick(e) {
 }
 
 socket.on('fire_result', (data) => {
-    const { x, y, isHit, shooterIsPlayer0 } = data;
+    const { x, y, isHit, shooterIsPlayer0, sunkShip } = data;
     const myShot = (shooterIsPlayer0 === isPlayer0);
     const coordString = `${x},${y}`;
 
@@ -282,6 +299,16 @@ socket.on('fire_result', (data) => {
         } else {
             cell.classList.add('miss');
             opponentMissCells.add(coordString);
+        }
+    }
+
+    if (sunkShip) {
+        const shipDef = SHIPS_DATA.find(s => s.id === sunkShip);
+        const name = shipDef ? shipDef.name : 'Ship';
+        if (myShot) {
+            showNotification(`Enemy ${name} sunk!`, 'var(--neon-green)');
+        } else {
+            showNotification(`Your ${name} was sunk!`, 'var(--alert-red)');
         }
     }
 });
