@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship: Naval Warfare</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="radar-bg"></div>
+
+    <header>
+        <h1>BATTLESHIP</h1>
+        <p class="subtitle">Tactical Naval Warfare</p>
+    </header>
+
+    <main id="app">
+        <!-- SCREEN 1: Join / Lobby -->
+        <section id="screen-lobby" class="screen active">
+            <div class="glass-panel">
+                <h2>Welcome Commander</h2>
+                <p>Engage in real-time naval combat against other players on the local network.</p>
+                <button id="btn-join-queue" class="btn primary-btn">Join Matchmaking</button>
+                <div id="queue-status" class="status-text hidden">Waiting for an opponent...</div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: Ship Placement -->
+        <section id="screen-placement" class="screen hidden">
+            <div class="glass-panel layout-row">
+                <div class="fleet-controls">
+                    <h2>Deploy Your Fleet</h2>
+                    <p>Click to place ships or press [R] to rotate.</p>
+                    <div id="fleet-list" class="fleet-list">
+                        <!-- Ships to place will be injected here -->
+                    </div>
+                    <button id="btn-ready" class="btn success-btn" disabled>Ready for Battle</button>
+                    <div id="placement-status" class="status-text hidden">Waiting for opponent to place ships...</div>
+                </div>
+                <div class="grid-container">
+                    <div id="placement-grid" class="game-grid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: Battle Phase -->
+        <section id="screen-battle" class="screen hidden">
+            <div class="turn-indicator" id="turn-indicator">Your Turn!</div>
+            <div class="battlefield">
+                <div class="grid-wrapper">
+                    <h3>Your Fleet</h3>
+                    <div id="own-grid" class="game-grid"></div>
+                </div>
+                <div class="grid-wrapper">
+                    <h3>Target Grid</h3>
+                    <div id="target-grid" class="game-grid target"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: Game Over -->
+        <section id="screen-game-over" class="screen hidden">
+            <div class="glass-panel">
+                <h2 id="game-over-title">Victory!</h2>
+                <p id="game-over-msg">You have annihilated the enemy fleet.</p>
+                <button id="btn-play-again" class="btn primary-btn" onclick="location.reload()">Return to Fleet Command</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+</body>
+</html>
