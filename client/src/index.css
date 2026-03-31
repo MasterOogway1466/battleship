@@ -1,3 +1,7 @@
+#root {
+    display: contents;
+}
+
 /* Variables & Global State */
 :root {
     --bg-dark: #0a0e17;
