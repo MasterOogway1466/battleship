@@ -17,8 +17,11 @@ export default function ShipPlacement({ socket, setScreen, setPlacedShips }) {
     const [selectedShip, setSelectedShip] = useState(null);
 
     const [pendingPlacement, setPendingPlacement] = useState(null);
+    const [hoveredCell, setHoveredCell] = useState(null);
     const [status, setStatus] = useState(''); 
     const [isReady, setIsReady] = useState(false);
+    
+    const isTouchDevice = typeof window !== 'undefined' && (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
 
     useEffect(() => {
         socket.on('waiting_opponent_placement', () => {
@@ -63,6 +66,15 @@ export default function ShipPlacement({ socket, setScreen, setPlacedShips }) {
         return true;
     };
 
+    const handleCellHover = (x, y) => {
+        if (!selectedShip || isReady || pendingPlacement) return;
+        setHoveredCell({ x, y });
+    };
+
+    const handleCellLeave = () => {
+        setHoveredCell(null);
+    };
+
     const handleCellClick = (x, y) => {
         if (!selectedShip || isReady) return;
         
@@ -74,6 +86,7 @@ export default function ShipPlacement({ socket, setScreen, setPlacedShips }) {
                 startY: y,
                 isHoriz: isHorizontal
             });
+            setHoveredCell(null);
         } else {
             setPendingPlacement(null);
         }
@@ -121,17 +134,35 @@ export default function ShipPlacement({ socket, setScreen, setPlacedShips }) {
                             break;
                         }
                     }
+                } else if (hoveredCell && !pendingPlacement && !hasPlaced && selectedShip) {
+                    const startX = hoveredCell.x;
+                    const startY = hoveredCell.y;
+                    const isHoriz = isHorizontal;
+                    const valid = canPlaceShip(startX, startY, selectedShip.length, isHoriz);
+                    for (let i = 0; i < selectedShip.length; i++) {
+                        if (x === startX + (isHoriz ? i : 0) && y === startY + (isHoriz ? 0 : i)) {
+                            isPreview = true;
+                            if (!valid) isInvalidPreview = true;
+                            break;
+                        }
+                    }
                 }
 
                 let className = "cell";
                 if (hasPlaced) className += " ship-segment";
-                else if (isPreview) className += " ship-preview pending";
+                else if (isPreview) {
+                    className += " ship-preview";
+                    if (pendingPlacement) className += " pending";
+                    if (isInvalidPreview) className += " invalid";
+                }
 
                 cells.push(
                     <div 
                         key={`${x},${y}`} 
                         className={className}
                         onClick={() => handleCellClick(x, y)}
+                        onMouseEnter={!isTouchDevice ? () => handleCellHover(x, y) : undefined}
+                        onMouseLeave={!isTouchDevice ? handleCellLeave : undefined}
                         style={{ cursor: (!hasPlaced && selectedShip && !isReady) ? 'pointer' : 'default' }}
                     ></div>
                 );
