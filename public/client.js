@@ -155,6 +155,7 @@ function clearPendingPreview() {
 
 function createGrid(container, onClick, onHover, onLeave) {
     container.innerHTML = '';
+    const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     for (let y = 0; y < 10; y++) {
         for (let x = 0; x < 10; x++) {
             const cell = document.createElement('div');
@@ -162,8 +163,10 @@ function createGrid(container, onClick, onHover, onLeave) {
             cell.dataset.x = x;
             cell.dataset.y = y;
             if (onClick) cell.addEventListener('click', onClick);
-            if (onHover) cell.addEventListener('mouseenter', onHover);
-            if (onLeave) cell.addEventListener('mouseleave', onLeave);
+            if (!hasTouch) {
+                if (onHover) cell.addEventListener('mouseenter', onHover);
+                if (onLeave) cell.addEventListener('mouseleave', onLeave);
+            }
             container.appendChild(cell);
         }
     }

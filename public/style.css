@@ -258,6 +258,7 @@ h1 {
     background-color: rgba(2, 6, 23, 0.8);
     position: relative;
     transition: background-color 0.2s;
+    cursor: pointer;
 }
 
 @media (hover: hover) {
