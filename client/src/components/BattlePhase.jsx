@@ -12,7 +12,7 @@ export default function BattlePhase({
             const { x, y, isHit, shooterIsPlayer0, sunkShip } = data;
             const myShot = (shooterIsPlayer0 === isPlayer0);
             const coordString = `${x},${y}`;
-        
+
             if (myShot) {
                 if (isHit) setHitCells(prev => new Set([...prev, coordString]));
                 else setMissCells(prev => new Set([...prev, coordString]));
@@ -20,7 +20,7 @@ export default function BattlePhase({
                 if (isHit) setOpponentHitCells(prev => new Set([...prev, coordString]));
                 else setOpponentMissCells(prev => new Set([...prev, coordString]));
             }
-        
+
             if (sunkShip) {
                 const name = sunkShip.charAt(0).toUpperCase() + sunkShip.slice(1);
                 if (myShot) {
@@ -55,7 +55,7 @@ export default function BattlePhase({
         if (!isMyTurn) return;
         const coordString = `${x},${y}`;
         if (hitCells.has(coordString) || missCells.has(coordString)) return;
-        
+
         socket.emit('fire', { x, y });
     };
 
@@ -84,8 +84,8 @@ export default function BattlePhase({
                 if (hitCells.has(coordString)) className += " hit";
                 if (missCells.has(coordString)) className += " miss";
                 cells.push(
-                    <div 
-                        key={`target-${x}-${y}`} 
+                    <div
+                        key={`target-${x}-${y}`}
                         className={className}
                         onClick={() => handleTargetClick(x, y)}
                         style={{ cursor: isMyTurn ? 'crosshair' : 'default' }}
@@ -103,18 +103,18 @@ export default function BattlePhase({
             </div>
             <div className="battlefield">
                 <div className="grid-wrapper">
-                    <h3>Your Fleet</h3>
-                    <div className="game-grid">
-                        {renderOwnGrid()}
-                    </div>
-                </div>
-                <div className="grid-wrapper">
                     <h3>Target Grid</h3>
                     <div className={`game-grid target ${isMyTurn ? '' : 'disabled'}`} style={{
                         pointerEvents: isMyTurn ? 'auto' : 'none',
                         opacity: isMyTurn ? 1 : 0.7
                     }}>
                         {renderTargetGrid()}
+                    </div>
+                </div>
+                <div className="grid-wrapper">
+                    <h3>Your Fleet</h3>
+                    <div className="game-grid">
+                        {renderOwnGrid()}
                     </div>
                 </div>
             </div>
