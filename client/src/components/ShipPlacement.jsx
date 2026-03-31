@@ -43,16 +43,6 @@ export default function ShipPlacement({ socket, setScreen, setPlacedShips }) {
         }
     }, [placedLocalShips, selectedShip, nextShip, isReady]);
 
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key === 'r' || e.key === 'R') {
-                setIsHorizontal(prev => !prev);
-            }
-        };
-        document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
-    }, []);
-
     const canPlaceShip = (startX, startY, length, isHoriz) => {
         for (let i = 0; i < length; i++) {
             let x = startX + (isHoriz ? i : 0);
@@ -65,6 +55,45 @@ export default function ShipPlacement({ socket, setScreen, setPlacedShips }) {
         }
         return true;
     };
+
+    const toggleRotation = () => {
+        const newHoriz = !isHorizontal;
+        setIsHorizontal(newHoriz);
+        
+        if (pendingPlacement) {
+            const { ship, startX, startY } = pendingPlacement;
+            let newX = startX;
+            let newY = startY;
+            
+            if (newHoriz) {
+                if (newX + ship.length > 10) newX = 10 - ship.length;
+            } else {
+                if (newY + ship.length > 10) newY = 10 - ship.length;
+            }
+            
+            const valid = canPlaceShip(newX, newY, ship.length, newHoriz);
+            if (valid) {
+                setPendingPlacement({
+                    ship,
+                    startX: newX,
+                    startY: newY,
+                    isHoriz: newHoriz
+                });
+            } else {
+                setPendingPlacement(null);
+            }
+        }
+    };
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'r' || e.key === 'R') {
+                toggleRotation();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [isHorizontal, pendingPlacement, placedLocalShips]);
 
     const handleCellHover = (x, y) => {
         if (!selectedShip || isReady || pendingPlacement) return;
@@ -178,7 +207,7 @@ export default function ShipPlacement({ socket, setScreen, setPlacedShips }) {
                     <h2>Deploy Your Fleet</h2>
                     <p>Select a location, use [R] to rotate, then confirm.</p>
                     <div>
-                        <button className="btn" onClick={() => setIsHorizontal(!isHorizontal)} style={{marginTop: '10px', padding: '8px 16px', fontSize: '0.9rem', background: 'rgba(255,255,255,0.1)', color: 'white'}}>Rotate Ship</button>
+                        <button className="btn" onClick={toggleRotation} style={{marginTop: '10px', padding: '8px 16px', fontSize: '0.9rem', background: 'rgba(255,255,255,0.1)', color: 'white'}}>Rotate Ship</button>
                         {pendingPlacement && !isReady && (
                             <button className="btn" onClick={handleConfirm} style={{marginTop: '10px', marginLeft: '10px', padding: '8px 16px', fontSize: '0.9rem', background: 'rgba(0,255,136,0.3)', color: 'white', border: '1px solid var(--neon-green)'}}>Confirm Placement</button>
                         )}

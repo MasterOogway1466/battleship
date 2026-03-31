@@ -10,14 +10,14 @@ function App() {
   const [screen, setScreen] = useState('lobby'); // lobby, setup, battle, gameover
   const [isPlayer0, setIsPlayer0] = useState(false);
   const [isMyTurn, setIsMyTurn] = useState(false);
-  
+
   // Game state
   const [placedShips, setPlacedShips] = useState([]);
   const [hitCells, setHitCells] = useState(new Set());
   const [missCells, setMissCells] = useState(new Set());
   const [opponentHitCells, setOpponentHitCells] = useState(new Set());
   const [opponentMissCells, setOpponentMissCells] = useState(new Set());
-  
+
   const [notifications, setNotifications] = useState([]);
   const [winnerIsPlayer0, setWinnerIsPlayer0] = useState(false);
 
@@ -30,19 +30,19 @@ function App() {
   }, []);
 
   useEffect(() => {
-      if (!socket) return;
-      socket.on('game_start', (data) => {
-          setIsMyTurn(data.turn === socket.id);
-          setScreen('battle');
-      });
-      socket.on('opponent_disconnected', () => {
-          alert("Connection lost. The enemy fleet retreated.");
-          window.location.reload();
-      });
-      return () => {
-          socket.off('game_start');
-          socket.off('opponent_disconnected');
-      };
+    if (!socket) return;
+    socket.on('game_start', (data) => {
+      setIsMyTurn(data.turn === socket.id);
+      setScreen('battle');
+    });
+    socket.on('opponent_disconnected', () => {
+      alert("Connection lost. The enemy fleet retreated!");
+      window.location.reload();
+    });
+    return () => {
+      socket.off('game_start');
+      socket.off('opponent_disconnected');
+    };
   }, [socket]);
 
   const addNotification = (msg, color) => {
@@ -60,14 +60,14 @@ function App() {
       {screen === 'lobby' && (
         <Lobby socket={socket} setScreen={setScreen} setIsPlayer0={setIsPlayer0} />
       )}
-      
+
       {screen === 'setup' && (
         <ShipPlacement socket={socket} setScreen={setScreen} setPlacedShips={setPlacedShips} />
       )}
-      
+
       {screen === 'battle' && (
-        <BattlePhase 
-          socket={socket} 
+        <BattlePhase
+          socket={socket}
           isMyTurn={isMyTurn}
           setIsMyTurn={setIsMyTurn}
           isPlayer0={isPlayer0}
@@ -85,9 +85,9 @@ function App() {
           setWinnerIsPlayer0={setWinnerIsPlayer0}
         />
       )}
-      
+
       {screen === 'gameover' && (
-        <GameOver 
+        <GameOver
           isPlayer0={isPlayer0}
           winnerIsPlayer0={winnerIsPlayer0}
         />
