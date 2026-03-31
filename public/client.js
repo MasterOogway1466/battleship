@@ -13,6 +13,7 @@ const setupGridEl = document.getElementById('placement-grid');
 const fleetListEl = document.getElementById('fleet-list');
 const btnReady = document.getElementById('btn-ready');
 const btnRotate = document.getElementById('btn-rotate');
+const btnConfirmPlacement = document.getElementById('btn-confirm-placement');
 const setupStatus = document.getElementById('placement-status');
 const notificationArea = document.getElementById('notification-area');
 
@@ -38,6 +39,7 @@ const SHIPS_DATA = [
 // Local state
 let isHorizontal = true;
 let selectedShip = null;
+let pendingPlacement = null;
 const placedShips = []; // { id, positions: [{x,y}] }
 let myGrid = Array(10).fill(null).map(() => Array(10).fill(0)); // 0: empty, 1: ship
 let hitCells = new Set();
@@ -95,11 +97,59 @@ function initSetupPhase() {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'r' || e.key === 'R') {
             isHorizontal = !isHorizontal;
+            updatePendingPlacementView();
         }
     });
 
     btnRotate.addEventListener('click', () => {
         isHorizontal = !isHorizontal;
+        updatePendingPlacementView();
+    });
+
+    btnConfirmPlacement.addEventListener('click', confirmPlacement);
+}
+
+function updatePendingPlacementView() {
+    if (pendingPlacement) {
+        const fakeEvent = {
+            target: getCell(setupGridEl, pendingPlacement.startX, pendingPlacement.startY)
+        };
+        if (fakeEvent.target) handleSetupCellClick(fakeEvent);
+    }
+}
+
+function confirmPlacement() {
+    if (!pendingPlacement) return;
+    
+    const { ship, startX, startY, isHoriz } = pendingPlacement;
+    
+    const positions = [];
+    for(let i=0; i<ship.length; i++) {
+        let cx = startX + (isHoriz ? i : 0);
+        let cy = startY + (isHoriz ? 0 : i);
+        myGrid[cy][cx] = 1;
+        positions.push({x: cx, y: cy});
+        
+        const cEl = getCell(setupGridEl, cx, cy);
+        if(cEl) {
+            cEl.classList.remove('ship-preview', 'pending');
+            cEl.classList.add('ship-segment');
+        }
+    }
+    
+    placedShips.push({ id: ship.id, positions });
+    
+    pendingPlacement = null;
+    btnConfirmPlacement.style.display = 'none';
+    
+    selectedShip = null;
+    clearPendingPreview();
+    renderFleetList();
+}
+
+function clearPendingPreview() {
+    setupGridEl.querySelectorAll('.cell').forEach(c => {
+        c.classList.remove('ship-preview', 'invalid', 'pending');
     });
 }
 
@@ -136,6 +186,9 @@ function renderFleetList() {
             document.querySelectorAll('.ship-item').forEach(e => e.classList.remove('selected'));
             el.classList.add('selected');
             selectedShip = ship;
+            pendingPlacement = null;
+            btnConfirmPlacement.style.display = 'none';
+            if (typeof clearPendingPreview === 'function') clearPendingPreview();
         });
         
         // Auto-select first available ship
@@ -168,7 +221,7 @@ function canPlaceShip(startX, startY, length, isHoriz) {
 }
 
 function handleSetupCellHover(e) {
-    if (!selectedShip) return;
+    if (!selectedShip || pendingPlacement) return;
     const startX = parseInt(e.target.dataset.x);
     const startY = parseInt(e.target.dataset.y);
     const valid = canPlaceShip(startX, startY, selectedShip.length, isHorizontal);
@@ -187,8 +240,11 @@ function handleSetupCellHover(e) {
 }
 
 function handleSetupCellLeave(e) {
+    if (pendingPlacement) return;
     setupGridEl.querySelectorAll('.cell').forEach(c => {
-        c.classList.remove('ship-preview', 'invalid');
+        if (!c.classList.contains('pending')) {
+            c.classList.remove('ship-preview', 'invalid');
+        }
     });
 }
 
@@ -197,22 +253,33 @@ function handleSetupCellClick(e) {
     const startX = parseInt(e.target.dataset.x);
     const startY = parseInt(e.target.dataset.y);
     
-    if (canPlaceShip(startX, startY, selectedShip.length, isHorizontal)) {
-        const positions = [];
-        for(let i=0; i<selectedShip.length; i++) {
-            let cx = startX + (isHorizontal ? i : 0);
-            let cy = startY + (isHorizontal ? 0 : i);
-            myGrid[cy][cx] = 1;
-            positions.push({x: cx, y: cy});
-            
+    clearPendingPreview();
+    
+    const valid = canPlaceShip(startX, startY, selectedShip.length, isHorizontal);
+    
+    for(let i=0; i<selectedShip.length; i++) {
+        let cx = startX + (isHorizontal ? i : 0);
+        let cy = startY + (isHorizontal ? 0 : i);
+        if (cx < 10 && cy < 10) {
             const cEl = getCell(setupGridEl, cx, cy);
-            if(cEl) cEl.classList.add('ship-segment');
+            if(cEl) {
+                cEl.classList.add('ship-preview', 'pending');
+                if(!valid) cEl.classList.add('invalid');
+            }
         }
-        
-        placedShips.push({ id: selectedShip.id, positions });
-        selectedShip = null;
-        handleSetupCellLeave(); // Clear previews
-        renderFleetList();
+    }
+
+    if (valid) {
+        pendingPlacement = {
+            ship: selectedShip,
+            startX,
+            startY,
+            isHoriz: isHorizontal
+        };
+        btnConfirmPlacement.style.display = 'inline-block';
+    } else {
+        pendingPlacement = null;
+        btnConfirmPlacement.style.display = 'none';
     }
 }
 
