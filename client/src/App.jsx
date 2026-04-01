@@ -17,6 +17,8 @@ function App() {
   const [missCells, setMissCells] = useState(new Set());
   const [opponentHitCells, setOpponentHitCells] = useState(new Set());
   const [opponentMissCells, setOpponentMissCells] = useState(new Set());
+  const [sunkCells, setSunkCells] = useState(new Set());
+  const [opponentSunkCells, setOpponentSunkCells] = useState(new Set());
 
   const [notifications, setNotifications] = useState([]);
   const [winnerIsPlayer0, setWinnerIsPlayer0] = useState(false);
@@ -80,6 +82,10 @@ function App() {
           setOpponentHitCells={setOpponentHitCells}
           opponentMissCells={opponentMissCells}
           setOpponentMissCells={setOpponentMissCells}
+          sunkCells={sunkCells}
+          setSunkCells={setSunkCells}
+          opponentSunkCells={opponentSunkCells}
+          setOpponentSunkCells={setOpponentSunkCells}
           addNotification={addNotification}
           setScreen={setScreen}
           setWinnerIsPlayer0={setWinnerIsPlayer0}

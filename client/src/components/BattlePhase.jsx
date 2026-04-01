@@ -4,12 +4,13 @@ export default function BattlePhase({
     socket, isMyTurn, setIsMyTurn, isPlayer0, placedShips,
     hitCells, setHitCells, missCells, setMissCells,
     opponentHitCells, setOpponentHitCells, opponentMissCells, setOpponentMissCells,
+    sunkCells, setSunkCells, opponentSunkCells, setOpponentSunkCells,
     addNotification, setScreen, setWinnerIsPlayer0
 }) {
 
     useEffect(() => {
         const handleFireResult = (data) => {
-            const { x, y, isHit, shooterIsPlayer0, sunkShip } = data;
+            const { x, y, isHit, shooterIsPlayer0, sunkShip, sunkShipPositions } = data;
             const myShot = (shooterIsPlayer0 === isPlayer0);
             const coordString = `${x},${y}`;
 
@@ -25,8 +26,22 @@ export default function BattlePhase({
                 const name = sunkShip.charAt(0).toUpperCase() + sunkShip.slice(1);
                 if (myShot) {
                     addNotification(`Enemy ${name} sunk!`, 'var(--neon-green)');
+                    if (sunkShipPositions) {
+                        setSunkCells(prev => {
+                            const next = new Set(prev);
+                            sunkShipPositions.forEach(p => next.add(`${p.x},${p.y}`));
+                            return next;
+                        });
+                    }
                 } else {
                     addNotification(`Your ${name} was sunk!`, 'var(--alert-red)');
+                    if (sunkShipPositions) {
+                        setOpponentSunkCells(prev => {
+                            const next = new Set(prev);
+                            sunkShipPositions.forEach(p => next.add(`${p.x},${p.y}`));
+                            return next;
+                        });
+                    }
                 }
             }
         };
@@ -49,7 +64,7 @@ export default function BattlePhase({
             socket.off('turn_changed', handleTurnChanged);
             socket.off('game_over', handleGameOver);
         };
-    }, [socket, isPlayer0, addNotification, setHitCells, setMissCells, setOpponentHitCells, setOpponentMissCells, setIsMyTurn, setScreen, setWinnerIsPlayer0]);
+    }, [socket, isPlayer0, addNotification, setHitCells, setMissCells, setOpponentHitCells, setOpponentMissCells, setSunkCells, setOpponentSunkCells, setIsMyTurn, setScreen, setWinnerIsPlayer0]);
 
     const handleTargetClick = (x, y) => {
         if (!isMyTurn) return;
@@ -69,6 +84,7 @@ export default function BattlePhase({
                 if (isShip) className += " ship-segment";
                 if (opponentHitCells.has(coordString)) className += " hit";
                 if (opponentMissCells.has(coordString)) className += " miss";
+                if (opponentSunkCells.has(coordString)) className += " sunk";
                 cells.push(<div key={`own-${x}-${y}`} className={className}></div>);
             }
         }
@@ -83,6 +99,7 @@ export default function BattlePhase({
                 let className = "cell";
                 if (hitCells.has(coordString)) className += " hit";
                 if (missCells.has(coordString)) className += " miss";
+                if (sunkCells.has(coordString)) className += " sunk";
                 cells.push(
                     <div
                         key={`target-${x}-${y}`}

@@ -125,6 +125,7 @@ io.on('connection', (socket) => {
         // Check for win condition and sunk ships
         let isWin = false;
         let sunkShip = null;
+        let sunkShipPositions = null;
 
         if (isHit) {
             let hitCount = 0;
@@ -146,6 +147,7 @@ io.on('connection', (socket) => {
                     });
                     if (!wasSunkBefore) {
                         sunkShip = ship.id;
+                        sunkShipPositions = ship.positions;
                     }
                 }
             }
@@ -159,6 +161,7 @@ io.on('connection', (socket) => {
             y: coords.y,
             isHit,
             sunkShip,
+            sunkShipPositions,
             shooterIsPlayer0: isPlayer0
         });
 
@@ -168,8 +171,10 @@ io.on('connection', (socket) => {
             return;
         }
 
-        // Pass turn
-        game.turn = opponentId;
+        // Pass turn ONLY if it was a miss
+        if (!isHit) {
+            game.turn = opponentId;
+        }
         io.to(roomId).emit('turn_changed', { turn: game.turn });
     });
 });
