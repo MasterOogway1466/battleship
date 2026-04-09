@@ -4,12 +4,18 @@ import Lobby from './components/Lobby';
 import ShipPlacement from './components/ShipPlacement';
 import BattlePhase from './components/BattlePhase';
 import GameOver from './components/GameOver';
+import ThemeSelector from './components/ThemeSelector';
 
 function App() {
   const [socket, setSocket] = useState(null);
   const [screen, setScreen] = useState('lobby'); // lobby, setup, battle, gameover
   const [isPlayer0, setIsPlayer0] = useState(false);
   const [isMyTurn, setIsMyTurn] = useState(false);
+  const [theme, setTheme] = useState('manas');
+
+  useEffect(() => {
+    document.body.className = `theme-${theme}`;
+  }, [theme]);
 
   // Game state
   const [placedShips, setPlacedShips] = useState([]);
@@ -59,6 +65,10 @@ function App() {
 
   return (
     <>
+      {['lobby', 'setup'].includes(screen) && (
+        <ThemeSelector currentTheme={theme} setTheme={setTheme} />
+      )}
+
       {screen === 'lobby' && (
         <Lobby socket={socket} setScreen={setScreen} setIsPlayer0={setIsPlayer0} />
       )}

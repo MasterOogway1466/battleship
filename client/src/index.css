@@ -3,7 +3,9 @@
 }
 
 /* Variables & Global State */
-:root {
+
+/* Variables & Global State */
+:root, body.theme-manas {
     --bg-dark: #0a0e17;
     --panel-bg: rgba(16, 24, 43, 0.6);
     --neon-blue: #00e5ff;
@@ -13,7 +15,94 @@
     --cell-size: 40px;
     --text-main: #e0f2fe;
     --glass-border: rgba(255, 255, 255, 0.1);
+    
+    --heading-color: var(--heading-color);
+    --subtitle-color: var(--subtitle-color);
+    --paragraph-color: var(--paragraph-color);
+    
+    --btn-primary-1: #0284c7;
+    --btn-primary-2: #0369a1;
+    --btn-primary-shadow: rgba(2, 132, 199, 0.4);
+    --btn-primary-hover-1: #0369a1;
+    --btn-primary-hover-2: #075985;
+    --btn-primary-hover-shadow: rgba(2, 132, 199, 0.6);
+    
+    --btn-success-1: #10b981;
+    --btn-success-2: #059669;
+    --btn-success-shadow: rgba(16, 185, 129, 0.4);
+    --btn-success-hover-shadow: rgba(16, 185, 129, 0.6);
+    
+    --ship-item-bg: rgba(255,255,255,0.05);
+    --ship-item-text: #94a3b8;
+    --ship-item-selected-bg: rgba(0, 229, 255, 0.1);
+    
+    --grid-container-bg: rgba(0,0,0,0.5);
+    --grid-container-shadow: rgba(0,0,0,0.8);
+    
+    --cell-bg: rgba(2, 6, 23, 0.8);
+    --cell-hover-bg: rgba(0, 229, 255, 0.1);
+    
+    --ship-segment-1: #475569;
+    --ship-segment-2: #334155;
+    --ship-segment-border: #64748b;
+    --ship-segment-shadow: rgba(0,0,0,0.5);
+    
+    --sunk-cell-bg: var(--sunk-cell-bg);
+    --sunk-cell-stripe: var(--sunk-cell-stripe);
+    --sunk-cell-shadow: rgba(255, 30, 30, 0.6);
+    
+    --turn-indicator-bg: rgba(16, 24, 43, 0.8);
 }
+
+body.theme-anusha {
+    --bg-dark: #ffe4e1;
+    --panel-bg: rgba(255, 255, 255, 0.7);
+    --neon-blue: #ff69b4;
+    --neon-green: #00ced1;
+    --alert-red: #ff1493;
+    --grid-border: rgba(255, 105, 180, 0.4);
+    --cell-size: 40px;
+    --text-main: #4a001f;
+    --glass-border: rgba(255, 105, 180, 0.2);
+    
+    --heading-color: #4a001f;
+    --subtitle-color: #8c264c;
+    --paragraph-color: #5c1a3b;
+    
+    --btn-primary-1: #ffb6c1;
+    --btn-primary-2: #ff69b4;
+    --btn-primary-shadow: rgba(255, 105, 180, 0.4);
+    --btn-primary-hover-1: #ff69b4;
+    --btn-primary-hover-2: #ff1493;
+    --btn-primary-hover-shadow: rgba(255, 105, 180, 0.6);
+    
+    --btn-success-1: #ffb6c1;
+    --btn-success-2: #ff69b4;
+    --btn-success-shadow: rgba(255, 105, 180, 0.4);
+    --btn-success-hover-shadow: rgba(255, 105, 180, 0.6);
+    
+    --ship-item-bg: rgba(255, 182, 193, 0.4);
+    --ship-item-text: #4a001f;
+    --ship-item-selected-bg: rgba(255, 105, 180, 0.3);
+    
+    --grid-container-bg: rgba(255, 255, 255, 0.6);
+    --grid-container-shadow: rgba(255, 105, 180, 0.3);
+    
+    --cell-bg: rgba(255, 240, 245, 0.9);
+    --cell-hover-bg: rgba(255, 105, 180, 0.3);
+    
+    --ship-segment-1: #ffb6c1;
+    --ship-segment-2: #ff69b4;
+    --ship-segment-border: #ff1493;
+    --ship-segment-shadow: rgba(255, 20, 147, 0.4);
+    
+    --sunk-cell-bg: rgba(255, 20, 147, 0.2);
+    --sunk-cell-stripe: rgba(255, 20, 147, 0.4);
+    --sunk-cell-shadow: rgba(255, 20, 147, 0.6);
+    
+    --turn-indicator-bg: rgba(255, 255, 255, 0.9);
+}
+
 
 * {
     box-sizing: border-box;
@@ -72,7 +161,7 @@ h1 {
 
 .subtitle {
     font-size: 1.2rem;
-    color: #94a3b8;
+    color: var(--subtitle-color);
     letter-spacing: 2px;
     text-transform: uppercase;
 }
@@ -128,12 +217,12 @@ h1 {
 .glass-panel h2 {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: #fff;
+    color: var(--heading-color);
 }
 
 .glass-panel p {
     font-size: 1.1rem;
-    color: #cbd5e1;
+    color: var(--paragraph-color);
     line-height: 1.5;
     margin-bottom: 2rem;
 }
@@ -160,27 +249,27 @@ h1 {
 }
 
 .primary-btn {
-    background: linear-gradient(135deg, #0284c7, #0369a1);
+    background: linear-gradient(135deg, var(--btn-primary-1), var(--btn-primary-2));
     color: white;
-    box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+    box-shadow: 0 4px 15px var(--btn-primary-shadow);
 }
 
 .primary-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, #0369a1, #075985);
-    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6);
+    background: linear-gradient(135deg, var(--btn-primary-hover-1), var(--btn-primary-hover-2));
+    box-shadow: 0 6px 20px var(--btn-primary-hover-shadow);
     transform: translateY(-2px);
 }
 
 .success-btn {
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: linear-gradient(135deg, var(--btn-success-1), var(--btn-success-2));
     color: white;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 4px 15px var(--btn-success-shadow);
     margin-top: 1.5rem;
 }
 
 .success-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+    box-shadow: 0 6px 20px var(--btn-success-hover-shadow);
 }
 
 .status-text {
@@ -219,16 +308,16 @@ h1 {
 
 .ship-item {
     padding: 0.5rem 1rem;
-    background: rgba(255,255,255,0.05);
+    background: var(--ship-item-bg);
     border: 1px solid var(--glass-border);
     border-radius: 6px;
     cursor: pointer;
-    color: #94a3b8;
+    color: var(--ship-item-text);
     transition: all 0.2s;
 }
 
 .ship-item.selected {
-    background: rgba(0, 229, 255, 0.1);
+    background: var(--ship-item-selected-bg);
     border-color: var(--neon-blue);
     color: var(--neon-blue);
     box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
@@ -241,11 +330,11 @@ h1 {
 }
 
 .grid-container {
-    background: rgba(0,0,0,0.5);
+    background: var(--grid-container-bg);
     padding: 1rem;
     border-radius: 12px;
     border: 1px solid var(--grid-border);
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    box-shadow: inset 0 0 20px var(--grid-container-shadow);
 }
 
 .game-grid {
@@ -261,7 +350,7 @@ h1 {
 .cell {
     width: var(--cell-size);
     height: var(--cell-size);
-    background-color: rgba(2, 6, 23, 0.8);
+    background-color: var(--cell-bg);
     position: relative;
     transition: background-color 0.2s;
     cursor: pointer;
@@ -269,7 +358,7 @@ h1 {
 
 @media (hover: hover) {
     .cell:hover {
-        background-color: rgba(0, 229, 255, 0.1);
+        background-color: var(--cell-hover-bg);
     }
 }
 
@@ -292,9 +381,9 @@ h1 {
 
 /* Ship Placement Visuals */
 .ship-segment {
-    background: linear-gradient(135deg, #475569, #334155);
-    border: 1px solid #64748b;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    background: linear-gradient(135deg, var(--ship-segment-1), var(--ship-segment-2));
+    border: 1px solid var(--ship-segment-border);
+    box-shadow: inset 0 0 10px var(--ship-segment-shadow);
 }
 
 .ship-preview {
@@ -309,13 +398,13 @@ h1 {
 .cell.sunk {
     background: repeating-linear-gradient(
         45deg,
-        rgba(255, 51, 51, 0.2),
-        rgba(255, 51, 51, 0.2) 10px,
-        rgba(255, 51, 51, 0.4) 10px,
-        rgba(255, 51, 51, 0.4) 20px
+        var(--sunk-cell-bg),
+        var(--sunk-cell-bg) 10px,
+        var(--sunk-cell-stripe) 10px,
+        var(--sunk-cell-stripe) 20px
     );
     border: 1px solid var(--alert-red);
-    box-shadow: inset 0 0 10px rgba(255, 30, 30, 0.6);
+    box-shadow: inset 0 0 10px var(--sunk-cell-shadow);
 }
 
 /* Hit & Miss Markers */
@@ -339,7 +428,7 @@ h1 {
 .miss::before {
     width: 30%;
     height: 30%;
-    background-color: #cbd5e1;
+    background-color: var(--paragraph-color);
 }
 
 @keyframes impact {
@@ -367,7 +456,7 @@ h1 {
 
 .turn-indicator {
     padding: 0.5rem 2rem;
-    background: rgba(16, 24, 43, 0.8);
+    background: var(--turn-indicator-bg);
     border: 1px solid var(--neon-blue);
     border-radius: 20px;
     font-size: 1.2rem;
@@ -383,7 +472,7 @@ h1 {
 .turn-indicator.enemy-turn {
     border-color: var(--alert-red);
     color: var(--alert-red);
-    box-shadow: 0 0 15px rgba(255, 51, 51, 0.2);
+    box-shadow: 0 0 15px var(--sunk-cell-bg);
 }
 
 /* Responsive constraints */
