@@ -207,9 +207,9 @@ export default function ShipPlacement({ socket, setScreen, setPlacedShips }) {
                     <h2>Deploy Your Fleet</h2>
                     <p>Select a location, use [R] to rotate, then confirm.</p>
                     <div>
-                        <button className="btn" onClick={toggleRotation} style={{marginTop: '10px', padding: '8px 16px', fontSize: '0.9rem', background: 'var(--panel-bg)', color: 'var(--heading-color)'}}>Rotate Ship</button>
+                        <button className="btn placement-action-btn" onClick={toggleRotation}>Rotate Ship</button>
                         {pendingPlacement && !isReady && (
-                            <button className="btn" onClick={handleConfirm} style={{marginTop: '10px', marginLeft: '10px', padding: '8px 16px', fontSize: '0.9rem', background: 'var(--btn-success-shadow)', color: 'var(--heading-color)', border: '1px solid var(--neon-green)'}}>Confirm Placement</button>
+                            <button className="btn placement-confirm-btn" onClick={handleConfirm}>Confirm Placement</button>
                         )}
                     </div>
                 <div className="fleet-list">

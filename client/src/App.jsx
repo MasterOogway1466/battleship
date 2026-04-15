@@ -61,7 +61,7 @@ function App() {
     }, 4500);
   };
 
-  if (!socket) return <div style={{ color: 'white', textAlign: 'center', marginTop: '20vh' }}>Connecting to fleet command...</div>;
+  if (!socket) return <div style={{ color: 'var(--heading-color)', textAlign: 'center', marginTop: '20vh' }}>Connecting to fleet command...</div>;
 
   return (
     <>
